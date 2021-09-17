@@ -1,23 +1,3 @@
-# flutter_trading_chart
-
-Flutter package to display fully featured trading charts.  
-Can be used to display candlestick charts and add line series, scatter series, volume bars but also the volume profile.
-
-![example](https://github.com/AmauryBuguet/flutter_trading_chart/blob/master/example/example.png)
-## Getting Started
-### Install
-```yaml
-dependencies:
-  flutter_trading_chart: ^0.0.1
-```
-
-or use
-```
-flutter pub add flutter_trading_chart
-```
-
-### Usage
-```dart
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -121,5 +101,3 @@ class _ExempleTradingChartState extends State<ExempleTradingChart> {
     );
   }
 }
-```
-

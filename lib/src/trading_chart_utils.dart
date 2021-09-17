@@ -109,6 +109,7 @@ class TradingChartController {
   double pixelsPerUSDT = 0;
   double maxY = 0;
   double minY = 0;
+  int displayedCandlesOnReset = 50;
   Size size = const Size(1, 1);
 
   TradingChartController({
@@ -138,5 +139,16 @@ class TradingChartController {
   void setTimestamps(int start, int end) {
     startTsNotifier.value = start;
     endTsNotifier.value = end;
+  }
+
+  void centerChart() {
+    if (data.candleSerie != null && data.candleSerie!.candles.isNotEmpty) {
+      if (data.candleSerie!.candles.length > displayedCandlesOnReset) {
+        startTsNotifier.value = data.candleSerie!.candles[data.candleSerie!.candles.length - displayedCandlesOnReset].timestamp;
+      } else {
+        startTsNotifier.value = data.candleSerie!.candles.first.timestamp;
+      }
+      endTsNotifier.value = data.candleSerie!.candles.last.timestamp;
+    }
   }
 }
