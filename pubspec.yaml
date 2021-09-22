@@ -1,6 +1,6 @@
 name: flutter_trading_chart
 description: Flutter package to display trading charts. It includes tools to draw indicators, customization parameters and panning and zooming abilities on the time axis.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/AmauryBuguet/flutter_trading_chart
 repository: https://github.com/AmauryBuguet/flutter_trading_chart
 

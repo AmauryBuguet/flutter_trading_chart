@@ -124,15 +124,19 @@ class TradingChartController {
 
   Offset chartPositionToLocalPosition(Point pt) {
     return Offset(
-      (pt.timestamp - startTsNotifier.value) * pixelsPerMs + settings.chartMargins.left * size.width,
+      (pt.timestamp - startTsNotifier.value) * pixelsPerMs +
+          settings.chartMargins.left * size.width,
       (maxY - pt.y) * pixelsPerUSDT + settings.chartMargins.top * size.height,
     );
   }
 
   Point localPositionToChartPosition(Offset pt) {
     return Point(
-      timestamp: (pt.dx - settings.chartMargins.left * size.width) ~/ pixelsPerMs + startTsNotifier.value,
-      y: maxY - (pt.dy - settings.chartMargins.top * size.height) / pixelsPerUSDT,
+      timestamp:
+          (pt.dx - settings.chartMargins.left * size.width) ~/ pixelsPerMs +
+              startTsNotifier.value,
+      y: maxY -
+          (pt.dy - settings.chartMargins.top * size.height) / pixelsPerUSDT,
     );
   }
 
@@ -144,7 +148,10 @@ class TradingChartController {
   void centerChart() {
     if (data.candleSerie != null && data.candleSerie!.candles.isNotEmpty) {
       if (data.candleSerie!.candles.length > displayedCandlesOnReset) {
-        startTsNotifier.value = data.candleSerie!.candles[data.candleSerie!.candles.length - displayedCandlesOnReset].timestamp;
+        startTsNotifier.value = data
+            .candleSerie!
+            .candles[data.candleSerie!.candles.length - displayedCandlesOnReset]
+            .timestamp;
       } else {
         startTsNotifier.value = data.candleSerie!.candles.first.timestamp;
       }

@@ -44,10 +44,13 @@ class TradingChartPainter extends CustomPainter {
     CandlestickSerie? candleSerieSublist;
     var serie = controller.data.candleSerie;
     if (serie != null) {
-      int firstIndex = serie.candles.indexWhere((e) => e.timestamp >= startTimestamp.value);
-      int lastIndex = serie.candles.indexWhere((e) => e.timestamp >= endTimestamp.value, firstIndex);
+      int firstIndex =
+          serie.candles.indexWhere((e) => e.timestamp >= startTimestamp.value);
+      int lastIndex = serie.candles
+          .indexWhere((e) => e.timestamp >= endTimestamp.value, firstIndex);
       if (firstIndex != -1) {
-        var candles = serie.candles.sublist(firstIndex, lastIndex != -1 ? lastIndex : serie.candles.length);
+        var candles = serie.candles.sublist(
+            firstIndex, lastIndex != -1 ? lastIndex : serie.candles.length);
         candleSerieSublist = CandlestickSerie(
           name: serie.name,
           bearPaint: serie.bearPaint,
@@ -67,7 +70,8 @@ class TradingChartPainter extends CustomPainter {
     for (LineSerie serie in controller.data.lineSeries) {
       if (serie.points.isNotEmpty) {
         var pts = serie.points.where((e) {
-          return (e.timestamp >= startTimestamp.value) && (e.timestamp <= endTimestamp.value);
+          return (e.timestamp >= startTimestamp.value) &&
+              (e.timestamp <= endTimestamp.value);
         }).toList();
         if (pts.isNotEmpty) {
           lineSeriesSublist.add(LineSerie(
@@ -86,7 +90,8 @@ class TradingChartPainter extends CustomPainter {
     for (ScatterSerie serie in controller.data.scatterSeries) {
       if (serie.points.isNotEmpty) {
         var pts = serie.points.where((e) {
-          return (e.timestamp >= startTimestamp.value) && (e.timestamp <= endTimestamp.value);
+          return (e.timestamp >= startTimestamp.value) &&
+              (e.timestamp <= endTimestamp.value);
         }).toList();
         if (pts.isNotEmpty) {
           scatterSerieSublist.add(ScatterSerie(
@@ -116,19 +121,27 @@ class TradingChartPainter extends CustomPainter {
     }
 
     // set utils variables
-    double margin = controller.settings.pricePercentMargin * (controller.maxY - controller.minY) / 100;
+    double margin = controller.settings.pricePercentMargin *
+        (controller.maxY - controller.minY) /
+        100;
     controller.maxY += margin;
     controller.minY -= margin;
-    controller.pixelsPerMs = (size.width - (marginLeft + marginRight)) / (endTimestamp.value - startTimestamp.value);
-    controller.pixelsPerUSDT = (size.height - (marginBottom + marginTop)) / (controller.maxY - controller.minY);
+    controller.pixelsPerMs = (size.width - (marginLeft + marginRight)) /
+        (endTimestamp.value - startTimestamp.value);
+    controller.pixelsPerUSDT = (size.height - (marginBottom + marginTop)) /
+        (controller.maxY - controller.minY);
 
     // Draw candles
     if (candleSerieSublist != null) {
-      int msPerCandle = 60000; // If there is only one candle, then it is considered as a 5-min candle.
+      int msPerCandle =
+          60000; // If there is only one candle, then it is considered as a 5-min candle.
       if (candleSerieSublist.candles.length >= 2) {
-        msPerCandle = candleSerieSublist.candles[1].timestamp - candleSerieSublist.candles[0].timestamp;
+        msPerCandle = candleSerieSublist.candles[1].timestamp -
+            candleSerieSublist.candles[0].timestamp;
       }
-      double bodySize = ((size.width - (marginLeft + marginRight)) * msPerCandle * candleSerieSublist.ratioCandleSpace) /
+      double bodySize = ((size.width - (marginLeft + marginRight)) *
+              msPerCandle *
+              candleSerieSublist.ratioCandleSpace) /
           (controller.endTsNotifier.value - controller.startTsNotifier.value);
       for (Candlestick candle in candleSerieSublist.candles) {
         Paint paint;
@@ -142,20 +155,34 @@ class TradingChartPainter extends CustomPainter {
         // Draw up wick
         canvas.drawRect(
           Rect.fromLTRB(
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs - (candleSerieSublist.wickWidth / 2) + marginLeft,
-            (controller.maxY - candle.high) * controller.pixelsPerUSDT + marginTop,
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs + (candleSerieSublist.wickWidth / 2) + marginLeft,
-            (controller.maxY - max(candle.open, candle.close)) * controller.pixelsPerUSDT + marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
+                (candleSerieSublist.wickWidth / 2) +
+                marginLeft,
+            (controller.maxY - candle.high) * controller.pixelsPerUSDT +
+                marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
+                (candleSerieSublist.wickWidth / 2) +
+                marginLeft,
+            (controller.maxY - max(candle.open, candle.close)) *
+                    controller.pixelsPerUSDT +
+                marginTop,
           ),
           paint,
         );
         // Draw down wick
         canvas.drawRect(
           Rect.fromLTRB(
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs - (candleSerieSublist.wickWidth / 2) + marginLeft,
-            (controller.maxY - min(candle.open, candle.close)) * controller.pixelsPerUSDT + marginTop,
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs + (candleSerieSublist.wickWidth / 2) + marginLeft,
-            (controller.maxY - candle.low) * controller.pixelsPerUSDT + marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
+                (candleSerieSublist.wickWidth / 2) +
+                marginLeft,
+            (controller.maxY - min(candle.open, candle.close)) *
+                    controller.pixelsPerUSDT +
+                marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
+                (candleSerieSublist.wickWidth / 2) +
+                marginLeft,
+            (controller.maxY - candle.low) * controller.pixelsPerUSDT +
+                marginTop,
           ),
           paint,
         );
@@ -163,26 +190,43 @@ class TradingChartPainter extends CustomPainter {
         // Draw body
         canvas.drawRect(
           Rect.fromLTRB(
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs - (bodySize / 2) + marginLeft,
-            (controller.maxY - candle.close) * controller.pixelsPerUSDT + marginTop,
-            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs + (bodySize / 2) + marginLeft,
-            (controller.maxY - candle.open) * controller.pixelsPerUSDT + marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
+                (bodySize / 2) +
+                marginLeft,
+            (controller.maxY - candle.close) * controller.pixelsPerUSDT +
+                marginTop,
+            (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
+                (bodySize / 2) +
+                marginLeft,
+            (controller.maxY - candle.open) * controller.pixelsPerUSDT +
+                marginTop,
           ),
           paint,
         );
 
         // draw volume
         if (controller.settings.volume.visible) {
-          double maxVol = candleSerieSublist.candles.map((e) => e.volume).reduce(max);
-          double highSize = controller.settings.volume.maxPercentHeight * (size.height - marginBottom - marginTop);
+          double maxVol =
+              candleSerieSublist.candles.map((e) => e.volume).reduce(max);
+          double highSize = controller.settings.volume.maxPercentHeight *
+              (size.height - marginBottom - marginTop);
           canvas.drawRect(
             Rect.fromLTRB(
-              (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs - (bodySize / 2) + marginLeft,
+              (candle.timestamp - startTimestamp.value) *
+                      controller.pixelsPerMs -
+                  (bodySize / 2) +
+                  marginLeft,
               size.height - marginBottom - (candle.volume * highSize / maxVol),
-              (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs + (bodySize / 2) + marginLeft,
+              (candle.timestamp - startTimestamp.value) *
+                      controller.pixelsPerMs +
+                  (bodySize / 2) +
+                  marginLeft,
               size.height - marginBottom,
             ),
-            Paint()..color = candle.close >= candle.open ? controller.settings.volume.upColor : controller.settings.volume.downColor,
+            Paint()
+              ..color = candle.close >= candle.open
+                  ? controller.settings.volume.upColor
+                  : controller.settings.volume.downColor,
           );
         }
       }
@@ -194,8 +238,11 @@ class TradingChartPainter extends CustomPainter {
           PointMode.polygon,
           serie.points
               .map((point) => Offset(
-                    (point.timestamp - startTimestamp.value) * controller.pixelsPerMs + marginLeft,
-                    (controller.maxY - point.y) * controller.pixelsPerUSDT + marginTop,
+                    (point.timestamp - startTimestamp.value) *
+                            controller.pixelsPerMs +
+                        marginLeft,
+                    (controller.maxY - point.y) * controller.pixelsPerUSDT +
+                        marginTop,
                   ))
               .toList(),
           Paint()
@@ -209,8 +256,11 @@ class TradingChartPainter extends CustomPainter {
         PointMode.points,
         serie.points
             .map((e) => Offset(
-                  (e.timestamp - startTimestamp.value) * controller.pixelsPerMs + marginLeft,
-                  (controller.maxY - e.y) * controller.pixelsPerUSDT + marginTop,
+                  (e.timestamp - startTimestamp.value) *
+                          controller.pixelsPerMs +
+                      marginLeft,
+                  (controller.maxY - e.y) * controller.pixelsPerUSDT +
+                      marginTop,
                 ))
             .toList(),
         Paint()
@@ -248,23 +298,36 @@ class TradingChartPainter extends CustomPainter {
     // Draw vpvr
     if (controller.settings.vpvr.visible && candleSerieSublist != null) {
       Map<int, double> volumeMap = {};
-      double wideness = (controller.maxY - controller.minY) / controller.settings.vpvr.nbBars;
+      double wideness =
+          (controller.maxY - controller.minY) / controller.settings.vpvr.nbBars;
       for (Candlestick candle in candleSerieSublist.candles) {
         int level = (candle.close - controller.minY) ~/ wideness;
         volumeMap[level] = (volumeMap[level] ?? 0) + candle.volume;
       }
       double maxVol = volumeMap.values.reduce(max);
-      double highSize = controller.settings.vpvr.maxPercentWidth * (size.width - marginLeft - marginRight);
-      double barWidth = (size.height - marginBottom - marginTop) * 0.4 / controller.settings.vpvr.nbBars;
+      double highSize = controller.settings.vpvr.maxPercentWidth *
+          (size.width - marginLeft - marginRight);
+      double barWidth = (size.height - marginBottom - marginTop) *
+          0.4 /
+          controller.settings.vpvr.nbBars;
       for (var entry in volumeMap.entries) {
         canvas.drawRect(
           Rect.fromLTRB(
             size.width - marginRight - (entry.value * highSize / maxVol),
-            (controller.maxY - (entry.key * wideness + controller.minY)) * controller.pixelsPerUSDT + marginTop - barWidth,
+            (controller.maxY - (entry.key * wideness + controller.minY)) *
+                    controller.pixelsPerUSDT +
+                marginTop -
+                barWidth,
             size.width - marginRight,
-            (controller.maxY - (entry.key * wideness + controller.minY)) * controller.pixelsPerUSDT + marginTop + barWidth,
+            (controller.maxY - (entry.key * wideness + controller.minY)) *
+                    controller.pixelsPerUSDT +
+                marginTop +
+                barWidth,
           ),
-          Paint()..color = entry.value == maxVol ? controller.settings.vpvr.highestColor : controller.settings.vpvr.color,
+          Paint()
+            ..color = entry.value == maxVol
+                ? controller.settings.vpvr.highestColor
+                : controller.settings.vpvr.color,
         );
       }
     }
@@ -288,7 +351,8 @@ class TradingChartPainter extends CustomPainter {
         Paint()..color = controller.settings.backgroundColor);
 
     // Draw Y axis labels
-    double intervalY = (size.height - (marginTop + marginBottom)) / controller.settings.nbDivisionsYAxis;
+    double intervalY = (size.height - (marginTop + marginBottom)) /
+        controller.settings.nbDivisionsYAxis;
     const textStyle = TextStyle(
       color: Colors.white,
       fontSize: 10,
@@ -308,7 +372,8 @@ class TradingChartPainter extends CustomPainter {
         );
       }
 
-      double y = (marginTop - yPos) / controller.pixelsPerUSDT + controller.maxY;
+      double y =
+          (marginTop - yPos) / controller.pixelsPerUSDT + controller.maxY;
       final textSpan = TextSpan(
         text: y.toStringAsFixed(2),
         style: textStyle,
@@ -329,7 +394,8 @@ class TradingChartPainter extends CustomPainter {
     }
 
     // Draw X axis labels
-    double intervalX = (size.width - (marginLeft + marginRight)) / controller.settings.nbDivisionsXAxis;
+    double intervalX = (size.width - (marginLeft + marginRight)) /
+        controller.settings.nbDivisionsXAxis;
     for (int i = 0; i < controller.settings.nbDivisionsXAxis + 1; ++i) {
       double xPos = marginLeft + i * intervalX;
       canvas.drawLine(
@@ -345,7 +411,10 @@ class TradingChartPainter extends CustomPainter {
         );
       }
 
-      int x = (endTimestamp.value - startTimestamp.value) * i ~/ controller.settings.nbDivisionsXAxis + startTimestamp.value;
+      int x = (endTimestamp.value - startTimestamp.value) *
+              i ~/
+              controller.settings.nbDivisionsXAxis +
+          startTimestamp.value;
       final textSpan = TextSpan(
         text: getStrFromDate(x),
         style: textStyle,
@@ -368,7 +437,8 @@ class TradingChartPainter extends CustomPainter {
 
   String getStrFromDate(int ts) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(ts);
-    DateTime startDate = DateTime.fromMillisecondsSinceEpoch(startTimestamp.value);
+    DateTime startDate =
+        DateTime.fromMillisecondsSinceEpoch(startTimestamp.value);
     DateTime endDate = DateTime.fromMillisecondsSinceEpoch(endTimestamp.value);
     if (startDate.year != endDate.year) {
       return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
