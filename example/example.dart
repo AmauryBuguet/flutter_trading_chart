@@ -1,25 +1,3 @@
-# flutter_trading_chart
-
-Flutter package to display trading charts.  
-It includes tools to draw indicators, customization parameters and panning and zooming abilities on the time axis.  
-Volume and Volume profile are already built-in.
-
-
-![example](https://github.com/AmauryBuguet/flutter_trading_chart/blob/master/example/Pictures/example.png)
-## Getting Started
-### Install
-```yaml
-dependencies:
-  flutter_trading_chart: ^0.0.1
-```
-
-or use
-```
-flutter pub add flutter_trading_chart
-```
-
-### Usage
-```dart
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -123,5 +101,3 @@ class _ExempleTradingChartState extends State<ExempleTradingChart> {
     );
   }
 }
-```
-
