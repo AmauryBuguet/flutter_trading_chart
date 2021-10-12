@@ -67,7 +67,8 @@ class TradingChartPainter extends CustomPainter {
       }
     }
     List<LineSerie> lineSeriesSublist = [];
-    for (LineSerie serie in controller.data.lineSeries) {
+    for (LineSerie serie
+        in controller.data.lineSeries.where((e) => e.visible)) {
       if (serie.points.isNotEmpty) {
         var pts = serie.points.where((e) {
           return (e.timestamp >= startTimestamp.value) &&
@@ -234,7 +235,7 @@ class TradingChartPainter extends CustomPainter {
     }
 
     // Draw Line Series
-    for (LineSerie serie in lineSeriesSublist.where((e) => e.visible)) {
+    for (LineSerie serie in lineSeriesSublist) {
       canvas.drawPoints(
           PointMode.polygon,
           serie.points
