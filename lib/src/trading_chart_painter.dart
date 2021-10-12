@@ -233,7 +233,7 @@ class TradingChartPainter extends CustomPainter {
     }
 
     // Draw Line Series
-    for (LineSerie serie in lineSeriesSublist) {
+    for (LineSerie serie in lineSeriesSublist.where((e) => e.visible)) {
       canvas.drawPoints(
           PointMode.polygon,
           serie.points

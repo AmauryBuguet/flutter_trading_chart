@@ -58,11 +58,13 @@ class LineSerie {
   final String name;
   final Color color;
   List<Point> points;
+  bool visible = true;
 
   LineSerie({
     required this.name,
     required this.color,
     List<Point>? points,
+    visible,
   }) : points = points ?? [];
 }
 

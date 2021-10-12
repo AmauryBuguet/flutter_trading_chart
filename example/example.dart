@@ -84,7 +84,10 @@ class _ExempleTradingChartState extends State<ExempleTradingChart> {
     controller.data.candleSerie = generateCandleStickSerie();
     List<Point> movingAveragePoints = [];
     for (int i = 8; i < controller.data.candleSerie!.candles.length; ++i) {
-      final sublist = controller.data.candleSerie!.candles.sublist(i - 8, i + 1).map((e) => e.close).toList();
+      final sublist = controller.data.candleSerie!.candles
+          .sublist(i - 8, i + 1)
+          .map((e) => e.close)
+          .toList();
       movingAveragePoints.add(Point(
         timestamp: controller.data.candleSerie!.candles[i].timestamp,
         y: sublist.average,
