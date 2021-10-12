@@ -78,6 +78,7 @@ class TradingChartPainter extends CustomPainter {
             name: serie.name,
             color: serie.color,
             points: pts,
+            visible: serie.visible,
           ));
           double maxi = pts.map<double>((e) => e.y).reduce(max);
           double mini = pts.map<double>((e) => e.y).reduce(min);
