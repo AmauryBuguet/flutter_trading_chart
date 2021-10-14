@@ -19,16 +19,16 @@ class TradingChartData {
 }
 
 class LRTB {
-  double left = 0.1;
-  double right = 0.1;
-  double top = 0.1;
-  double bottom = 0.1;
+  int left;
+  int right;
+  int top;
+  int bottom;
 
   LRTB({
-    this.left = 0.1,
-    this.right = 0.1,
-    this.bottom = 0.1,
-    this.top = 0.1,
+    this.left = 50,
+    this.right = 50,
+    this.bottom = 50,
+    this.top = 50,
   });
 }
 

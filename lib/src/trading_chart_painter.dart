@@ -21,19 +21,15 @@ class TradingChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double marginLeft = size.width * controller.settings.chartMargins.left;
-    double marginRight = size.width * controller.settings.chartMargins.right;
-    double marginTop = size.height * controller.settings.chartMargins.top;
-    double marginBottom = size.height * controller.settings.chartMargins.bottom;
     controller.size = size;
 
     // Draw grid and lines
     canvas.drawRect(
       Rect.fromLTRB(
-        marginLeft,
-        marginTop,
-        size.width - marginRight,
-        size.height - marginBottom,
+        controller.settings.chartMargins.left.toDouble(),
+        controller.settings.chartMargins.top.toDouble(),
+        size.width - controller.settings.chartMargins.right.toDouble(),
+        size.height - controller.settings.chartMargins.bottom.toDouble(),
       ),
       controller.settings.linesPaint,
     );
@@ -128,9 +124,13 @@ class TradingChartPainter extends CustomPainter {
         100;
     controller.maxY += margin;
     controller.minY -= margin;
-    controller.pixelsPerMs = (size.width - (marginLeft + marginRight)) /
+    controller.pixelsPerMs = (size.width -
+            (controller.settings.chartMargins.left.toDouble() +
+                controller.settings.chartMargins.right.toDouble())) /
         (endTimestamp.value - startTimestamp.value);
-    controller.pixelsPerUSDT = (size.height - (marginBottom + marginTop)) /
+    controller.pixelsPerUSDT = (size.height -
+            (controller.settings.chartMargins.bottom.toDouble() +
+                controller.settings.chartMargins.top.toDouble())) /
         (controller.maxY - controller.minY);
 
     // Draw candles
@@ -141,7 +141,9 @@ class TradingChartPainter extends CustomPainter {
         msPerCandle = candleSerieSublist.candles[1].timestamp -
             candleSerieSublist.candles[0].timestamp;
       }
-      double bodySize = ((size.width - (marginLeft + marginRight)) *
+      double bodySize = ((size.width -
+                  (controller.settings.chartMargins.left.toDouble() +
+                      controller.settings.chartMargins.right.toDouble())) *
               msPerCandle *
               candleSerieSublist.ratioCandleSpace) /
           (controller.endTsNotifier.value - controller.startTsNotifier.value);
@@ -159,15 +161,15 @@ class TradingChartPainter extends CustomPainter {
           Rect.fromLTRB(
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
                 (candleSerieSublist.wickWidth / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - candle.high) * controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
                 (candleSerieSublist.wickWidth / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - max(candle.open, candle.close)) *
                     controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
           ),
           paint,
         );
@@ -176,15 +178,15 @@ class TradingChartPainter extends CustomPainter {
           Rect.fromLTRB(
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
                 (candleSerieSublist.wickWidth / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - min(candle.open, candle.close)) *
                     controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
                 (candleSerieSublist.wickWidth / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - candle.low) * controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
           ),
           paint,
         );
@@ -194,14 +196,14 @@ class TradingChartPainter extends CustomPainter {
           Rect.fromLTRB(
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs -
                 (bodySize / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - candle.close) * controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
             (candle.timestamp - startTimestamp.value) * controller.pixelsPerMs +
                 (bodySize / 2) +
-                marginLeft,
+                controller.settings.chartMargins.left.toDouble(),
             (controller.maxY - candle.open) * controller.pixelsPerUSDT +
-                marginTop,
+                controller.settings.chartMargins.top.toDouble(),
           ),
           paint,
         );
@@ -211,19 +213,23 @@ class TradingChartPainter extends CustomPainter {
           double maxVol =
               candleSerieSublist.candles.map((e) => e.volume).reduce(max);
           double highSize = controller.settings.volume.maxPercentHeight *
-              (size.height - marginBottom - marginTop);
+              (size.height -
+                  controller.settings.chartMargins.bottom.toDouble() -
+                  controller.settings.chartMargins.top.toDouble());
           canvas.drawRect(
             Rect.fromLTRB(
               (candle.timestamp - startTimestamp.value) *
                       controller.pixelsPerMs -
                   (bodySize / 2) +
-                  marginLeft,
-              size.height - marginBottom - (candle.volume * highSize / maxVol),
+                  controller.settings.chartMargins.left.toDouble(),
+              size.height -
+                  controller.settings.chartMargins.bottom.toDouble() -
+                  (candle.volume * highSize / maxVol),
               (candle.timestamp - startTimestamp.value) *
                       controller.pixelsPerMs +
                   (bodySize / 2) +
-                  marginLeft,
-              size.height - marginBottom,
+                  controller.settings.chartMargins.left.toDouble(),
+              size.height - controller.settings.chartMargins.bottom.toDouble(),
             ),
             Paint()
               ..color = candle.close >= candle.open
@@ -242,9 +248,9 @@ class TradingChartPainter extends CustomPainter {
               .map((point) => Offset(
                     (point.timestamp - startTimestamp.value) *
                             controller.pixelsPerMs +
-                        marginLeft,
+                        controller.settings.chartMargins.left.toDouble(),
                     (controller.maxY - point.y) * controller.pixelsPerUSDT +
-                        marginTop,
+                        controller.settings.chartMargins.top.toDouble(),
                   ))
               .toList(),
           Paint()
@@ -260,9 +266,9 @@ class TradingChartPainter extends CustomPainter {
             .map((e) => Offset(
                   (e.timestamp - startTimestamp.value) *
                           controller.pixelsPerMs +
-                      marginLeft,
+                      controller.settings.chartMargins.left.toDouble(),
                   (controller.maxY - e.y) * controller.pixelsPerUSDT +
-                      marginTop,
+                      controller.settings.chartMargins.top.toDouble(),
                 ))
             .toList(),
         Paint()
@@ -276,12 +282,14 @@ class TradingChartPainter extends CustomPainter {
     for (StraightLineSerie serie in controller.data.straightLineSeries) {
       var path = Path();
       path.moveTo(
-        marginLeft,
-        (controller.maxY - serie.y) * controller.pixelsPerUSDT + marginTop,
+        controller.settings.chartMargins.left.toDouble(),
+        (controller.maxY - serie.y) * controller.pixelsPerUSDT +
+            controller.settings.chartMargins.top.toDouble(),
       );
       path.lineTo(
-        size.width - marginRight,
-        (controller.maxY - serie.y) * controller.pixelsPerUSDT + marginTop,
+        size.width - controller.settings.chartMargins.right.toDouble(),
+        (controller.maxY - serie.y) * controller.pixelsPerUSDT +
+            controller.settings.chartMargins.top.toDouble(),
       );
       canvas.drawPath(
         serie.dotted
@@ -308,22 +316,28 @@ class TradingChartPainter extends CustomPainter {
       }
       double maxVol = volumeMap.values.reduce(max);
       double highSize = controller.settings.vpvr.maxPercentWidth *
-          (size.width - marginLeft - marginRight);
-      double barWidth = (size.height - marginBottom - marginTop) *
+          (size.width -
+              controller.settings.chartMargins.left.toDouble() -
+              controller.settings.chartMargins.right.toDouble());
+      double barWidth = (size.height -
+              controller.settings.chartMargins.bottom.toDouble() -
+              controller.settings.chartMargins.top.toDouble()) *
           0.4 /
           controller.settings.vpvr.nbBars;
       for (var entry in volumeMap.entries) {
         canvas.drawRect(
           Rect.fromLTRB(
-            size.width - marginRight - (entry.value * highSize / maxVol),
+            size.width -
+                controller.settings.chartMargins.right.toDouble() -
+                (entry.value * highSize / maxVol),
             (controller.maxY - (entry.key * wideness + controller.minY)) *
                     controller.pixelsPerUSDT +
-                marginTop -
+                controller.settings.chartMargins.top.toDouble() -
                 barWidth,
-            size.width - marginRight,
+            size.width - controller.settings.chartMargins.right.toDouble(),
             (controller.maxY - (entry.key * wideness + controller.minY)) *
                     controller.pixelsPerUSDT +
-                marginTop +
+                controller.settings.chartMargins.top.toDouble() +
                 barWidth,
           ),
           Paint()
@@ -337,45 +351,50 @@ class TradingChartPainter extends CustomPainter {
     // hide overlappping candles
     canvas.drawRect(
         Rect.fromLTRB(
-          marginLeft - 1,
-          marginTop,
+          controller.settings.chartMargins.left.toDouble() - 1,
+          controller.settings.chartMargins.top.toDouble(),
           0,
           size.height,
         ),
         Paint()..color = controller.settings.backgroundColor);
     canvas.drawRect(
         Rect.fromLTRB(
-          size.width - marginRight + 1,
-          marginTop,
+          size.width - controller.settings.chartMargins.right.toDouble() + 1,
+          controller.settings.chartMargins.top.toDouble(),
           size.width,
           size.height,
         ),
         Paint()..color = controller.settings.backgroundColor);
 
     // Draw Y axis labels
-    double intervalY = (size.height - (marginTop + marginBottom)) /
+    double intervalY = (size.height -
+            (controller.settings.chartMargins.top.toDouble() +
+                controller.settings.chartMargins.bottom.toDouble())) /
         controller.settings.nbDivisionsYAxis;
     const textStyle = TextStyle(
       color: Colors.white,
       fontSize: 10,
     );
     for (int i = 0; i < controller.settings.nbDivisionsYAxis + 1; ++i) {
-      double yPos = marginTop + i * intervalY;
+      double yPos =
+          controller.settings.chartMargins.top.toDouble() + i * intervalY;
       canvas.drawLine(
-        Offset(marginLeft - 5, yPos),
-        Offset(marginLeft, yPos),
+        Offset(controller.settings.chartMargins.left.toDouble() - 5, yPos),
+        Offset(controller.settings.chartMargins.left.toDouble(), yPos),
         controller.settings.linesPaint,
       );
       if (controller.settings.gridVisible) {
         canvas.drawLine(
-          Offset(size.width - marginRight, yPos),
-          Offset(marginTop, yPos),
+          Offset(size.width - controller.settings.chartMargins.right.toDouble(),
+              yPos),
+          Offset(controller.settings.chartMargins.top.toDouble(), yPos),
           controller.settings.gridPaint,
         );
       }
 
-      double y =
-          (marginTop - yPos) / controller.pixelsPerUSDT + controller.maxY;
+      double y = (controller.settings.chartMargins.top.toDouble() - yPos) /
+              controller.pixelsPerUSDT +
+          controller.maxY;
       final textSpan = TextSpan(
         text: y.toStringAsFixed(2),
         style: textStyle,
@@ -391,24 +410,33 @@ class TradingChartPainter extends CustomPainter {
       );
       textPainter.paint(
         canvas,
-        Offset(marginLeft - 50, yPos - 7),
+        Offset(controller.settings.chartMargins.left.toDouble() - 50, yPos - 7),
       );
     }
 
     // Draw X axis labels
-    double intervalX = (size.width - (marginLeft + marginRight)) /
+    double intervalX = (size.width -
+            (controller.settings.chartMargins.left.toDouble() +
+                controller.settings.chartMargins.right.toDouble())) /
         controller.settings.nbDivisionsXAxis;
     for (int i = 0; i < controller.settings.nbDivisionsXAxis + 1; ++i) {
-      double xPos = marginLeft + i * intervalX;
+      double xPos =
+          controller.settings.chartMargins.left.toDouble() + i * intervalX;
       canvas.drawLine(
-        Offset(xPos, size.height - marginBottom + 5),
-        Offset(xPos, size.height - marginBottom),
+        Offset(
+            xPos,
+            size.height -
+                controller.settings.chartMargins.bottom.toDouble() +
+                5),
+        Offset(xPos,
+            size.height - controller.settings.chartMargins.bottom.toDouble()),
         controller.settings.linesPaint,
       );
       if (controller.settings.gridVisible) {
         canvas.drawLine(
-          Offset(xPos, marginTop),
-          Offset(xPos, size.height - marginBottom),
+          Offset(xPos, controller.settings.chartMargins.top.toDouble()),
+          Offset(xPos,
+              size.height - controller.settings.chartMargins.bottom.toDouble()),
           controller.settings.gridPaint,
         );
       }
@@ -432,7 +460,11 @@ class TradingChartPainter extends CustomPainter {
       );
       textPainter.paint(
         canvas,
-        Offset(xPos - 30, size.height - marginBottom + 5),
+        Offset(
+            xPos - 30,
+            size.height -
+                controller.settings.chartMargins.bottom.toDouble() +
+                5),
       );
     }
   }
