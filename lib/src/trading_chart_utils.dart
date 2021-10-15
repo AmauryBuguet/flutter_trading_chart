@@ -125,18 +125,16 @@ class TradingChartController {
   Offset chartPositionToLocalPosition(Point pt) {
     return Offset(
       (pt.timestamp - startTsNotifier.value) * pixelsPerMs +
-          settings.chartMargins.left * size.width,
-      (maxY - pt.y) * pixelsPerUSDT + settings.chartMargins.top * size.height,
+          settings.chartMargins.left,
+      (maxY - pt.y) * pixelsPerUSDT + settings.chartMargins.top,
     );
   }
 
   Point localPositionToChartPosition(Offset pt) {
     return Point(
-      timestamp:
-          (pt.dx - settings.chartMargins.left * size.width) ~/ pixelsPerMs +
-              startTsNotifier.value,
-      y: maxY -
-          (pt.dy - settings.chartMargins.top * size.height) / pixelsPerUSDT,
+      timestamp: (pt.dx - settings.chartMargins.left) ~/ pixelsPerMs +
+          startTsNotifier.value,
+      y: maxY - (pt.dy - settings.chartMargins.top) / pixelsPerUSDT,
     );
   }
 
