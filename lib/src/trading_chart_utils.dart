@@ -153,7 +153,8 @@ class TradingChartController {
       } else {
         startTsNotifier.value = data.candleSerie!.candles.first.timestamp;
       }
-      endTsNotifier.value = data.candleSerie!.candles.last.timestamp;
+      int endTs = data.candleSerie!.candles.last.timestamp;
+      endTsNotifier.value = endTs + (endTs - startTsNotifier.value) ~/ 20;
     }
   }
 }
